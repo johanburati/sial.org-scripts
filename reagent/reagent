@@ -16,18 +16,18 @@ killall -u `id -un` ssh-agent
 ssh-agent -s | grep -v echo > "$HOME/.ssh-agent"
 status=$?
 if [ $status -ne 0 ]; then
-  echo "error: non-zero exit starting ssh-agent: status=$status" >&2
-  exit $status
+    echo "error: non-zero exit starting ssh-agent: status=$status" >&2
+    exit $status
 fi
 
 # if have tty, try to read in keys (which could prompt for passwords)
 if test -t 0; then
-  . "$HOME/.ssh-agent"
-  for private_key in $HOME/.ssh/id_!(*.pub) $HOME/.ssh/identity; do
-    if [ -f "$private_key" ]; then
-      ssh-add $key_timeout "$private_key"
-    fi
-  done
+    . "$HOME/.ssh-agent"
+    for private_key in $HOME/.ssh/id_!(*.pub) $HOME/.ssh/identity; do
+        if [ -f "$private_key" ]; then
+        ssh-add $key_timeout "$private_key"
+        fi
+    done
 fi
 
 # this takes some time, so do it after above...
