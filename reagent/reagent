@@ -22,6 +22,7 @@ elif [ "$key_agent" == "gpg-agent" ]; then
 else
     echo "error: $key_agent is not a valid agent !"; exit 1
 fi
+
 status=$?
 if [ $status -ne 0 ]; then
     echo "error: non-zero exit starting $key_agent: status=$status" >&2
@@ -38,5 +39,11 @@ if test -t 0; then
     done
 fi
 
+# Add some aliases to manage the keys
+cat >> "$HOME/.ssh-agent" << EOF
+alias keylist='ssh-add -l'
+alias keyoff='ssh-add -D'
+alias keyon='ssh-add -t 10800'
+EOF
 # this takes some time, so do it after above...
 allsh - < "$HOME/.ssh-agent"
