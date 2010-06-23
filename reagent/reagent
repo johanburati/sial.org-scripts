@@ -9,14 +9,22 @@
 shopt -s extglob
 # timeout keys automatically (not compatible with older versions of OpenSSH)
 key_timeout="-t 10h"
+# the agent to hold the keys can be ssh-agent or pgp-agent
+key_agent="ssh-agent"
 
 # TODO portability problems of killall (e.g. Solaris?)
-killall -u `id -un` ssh-agent
+killall -u `id -un` "$key_agent"
 
-ssh-agent -s | grep -v echo > "$HOME/.ssh-agent"
+if [ "$key_agent" == "ssh-agent" ]; then
+    ssh-agent -s | grep -v echo > "$HOME/.ssh-agent"
+elif [ "$key_agent" == "gpg-agent" ]; then
+    gpg-agent --daemon --batch  --enable-ssh-support --batch  --write-env-file "$HOME/.ssh-agent"
+else
+    echo "error: $key_agent is not a valid agent !"; exit 1
+fi
 status=$?
 if [ $status -ne 0 ]; then
-    echo "error: non-zero exit starting ssh-agent: status=$status" >&2
+    echo "error: non-zero exit starting $key_agent: status=$status" >&2
     exit $status
 fi
 
