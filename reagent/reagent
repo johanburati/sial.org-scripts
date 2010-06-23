@@ -33,7 +33,7 @@ if test -t 0; then
     . "$HOME/.ssh-agent"
     for private_key in $HOME/.ssh/id_!(*.pub) $HOME/.ssh/identity; do
         if [ -f "$private_key" ]; then
-        ssh-add $key_timeout "$private_key"
+        DISPLAY='' ssh-add $key_timeout "$private_key"
         fi
     done
 fi
